@@ -1,30 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct TipoCelula *TipoApontador;
+
 typedef struct {
     char placa[10];
     int deslocamento;
     int prioridade;
 } TipoCarro;
 
-typedef struct {
-    TipoCarro item;
-    TipoApontador prox;
-} Celula;
-
-typedef struct {
-    TipoApontador frente;
-    TipoApontador tras;
-} TipoFila;
-
-typedef struct TipoCelula *TipoApontador;
-
-typedef struct TipoCarro {
-    char chave;
-} TipoCarro;
-
 typedef struct TipoCelula {
-    TipoCarro item;
+    TipoCarro carro;
     TipoApontador prox;
 } TipoCelula;
 
@@ -45,11 +31,11 @@ int Vazia(TipoFila Fila) {
 void Enfileira(TipoCarro x, TipoFila *Fila) {
     Fila->tras->prox = (TipoApontador)malloc(sizeof(TipoCelula));
     Fila->tras = Fila->tras->prox;
-    Fila->tras->item = x;
+    Fila->tras->carro = x;
     Fila->tras->prox = NULL;
 }
 
-void Desenfileira(TipoFila *Fila, TipoCarro *item) {
+void Desenfileira(TipoFila *Fila, TipoCarro *carro) {
     TipoApontador q;
     if (Vazia(*Fila)) {
         printf("Erro fila esta vazia\n");
@@ -57,14 +43,16 @@ void Desenfileira(TipoFila *Fila, TipoCarro *item) {
     }
     q = Fila->frente;
     Fila->frente = Fila->frente->prox;
-    *item = Fila->frente->item;
+    *carro = Fila->frente->carro;
     free(q);
 }
 
 void exibe(TipoFila fila) {
     TipoApontador aux = fila.frente->prox;
     while (aux != NULL) {
-        printf("\n%c", aux->item.chave);
+        printf("Deslocamento: \n%d", aux->carro.deslocamento);
+        printf("Placa: \n%s", aux->carro.placa);
+        printf("Prioridade: \n%d", aux->carro.prioridade);
         aux = aux->prox;
     }
 }
