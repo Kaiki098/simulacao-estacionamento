@@ -50,7 +50,7 @@ void Desenfileira(TipoFila *Fila, TipoCarro *carro) {
 void exibe(TipoFila fila) {
     TipoApontador aux = fila.frente->prox;
     while (aux != NULL) {
-        printf("Deslocamento: %d\n", aux->carro.deslocamento);
+        printf("\nDeslocamento: %d\n", aux->carro.deslocamento);
         printf("Placa: %s\n", aux->carro.placa);
         printf("Prioridade: %d\n", aux->carro.prioridade);
         aux = aux->prox;
