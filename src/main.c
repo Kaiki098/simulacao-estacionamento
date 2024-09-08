@@ -9,6 +9,7 @@ typedef struct {
 */
 
 #include "ruaFila.h"
+#include <gtk/gtk.h>
 #include <string.h>
 // Depois de fazer todas as funcoes, separar as funcoes em outro arquivo
 #define MAX_CARROS 5 // Numero maximo de carros no estacionamento
@@ -131,111 +132,134 @@ void exibirRuas(TipoFila BomJesusDosPassos, TipoFila MonsenhorJoaoPedro) {
     Vazia(MonsenhorJoaoPedro) ? printf("\nNao ha carros na rua Monsenhor Joao Pedro.") : exibe(MonsenhorJoaoPedro);
 }
 
-int main() {
+typedef struct {
+    GtkWidget *window;
+    GtkWidget *bt_estacionar;
+    GtkWidget *bt_retirar;
+    GtkWidget *et_placa;
+    GtkWidget *ck_prioridade;
+    GtkWidget *lb_estacionamento;
+    GtkWidget *lb_rua_espera;
+    TipoFila BomJesusDosPassos;
+    TipoFila MonsenhorJoaoPedro;
+} widgets_t;
 
-    TipoFila BomJesusDosPassos; // Estacionamento
-    FFVazia(&BomJesusDosPassos);
+void atualizaTela(widgets_t *w) {
+    char textoEstacionamento[4096] = {0}; // Aumente o tamanho conforme necessário
+    char textoRuaEspera[4096] = {0};      // Aumente o tamanho conforme necessário
+    const char *placaTemplate = "Placa: ";
+    const char *deslocamentoTemplate = "Deslocamento: ";
+    const char *prioridadeTemplate = "Prioridade: ";
 
-    TipoFila MonsenhorJoaoPedro; // Entrada/Fila de espera
-    FFVazia(&MonsenhorJoaoPedro);
+    TipoApontador aux = w->BomJesusDosPassos.frente->prox;
+    // Iterar sobre a fila estacionamento
+    while (aux != NULL) {
+        char carroFormatado[256] = {0};
+        strcat(carroFormatado, placaTemplate);
+        strcat(carroFormatado, aux->carro.placa);
+        strcat(carroFormatado, "\n");
+        char deslocamento[20] = {0};
+        snprintf(deslocamento, 20, "%d", aux->carro.deslocamento);
+        strcat(carroFormatado, deslocamentoTemplate);
+        strcat(carroFormatado, deslocamento);
+        strcat(carroFormatado, "\n\n");
 
-    TipoCarro carro;
+        strncat(textoEstacionamento, carroFormatado, sizeof(textoEstacionamento) - strlen(textoEstacionamento) - 1);
+        aux = aux->prox;
+    }
 
-    carro.deslocamento = 0;
-    carro.prioridade = 0;
-    strcpy(carro.placa, "1");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    strcpy(carro.placa, "2");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    strcpy(carro.placa, "3");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    strcpy(carro.placa, "4");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    strcpy(carro.placa, "5");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    carro.prioridade = 1;
-    strcpy(carro.placa, "6");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    carro.prioridade = 0;
-    strcpy(carro.placa, "7");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    carro.prioridade = 1;
-    strcpy(carro.placa, "8");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    carro.prioridade = 0;
-    strcpy(carro.placa, "9");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    carro.prioridade = 1;
-    strcpy(carro.placa, "10");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
+    // Atualizar o texto do label com o conteúdo do buffer
+    gtk_label_set_text(GTK_LABEL(w->lb_estacionamento), textoEstacionamento);
 
-    // TipoFila JaimeGoncalves; Eh necessaria?
-    // FFVazia(&JaimeGoncalves);
-    int opcao = 0;
+    aux = w->MonsenhorJoaoPedro.frente->prox;
+    while (aux != NULL) {
+        char carroFormatado[256] = {0};
+        strcat(carroFormatado, placaTemplate);
+        strcat(carroFormatado, aux->carro.placa);
+        strcat(carroFormatado, "\n");
+        strcat(carroFormatado, prioridadeTemplate);
 
-    do {
-        printf("\nSISTEMA DE ESTACIONAMENTO\n");
-        printf("\n 1. Estacionar carro\n");
-        printf(" 2. Retirar carro\n");
-        printf(" 3. Exibir ruas\n");
-        printf(" 0. Sair\n\n");
-        printf("Escolha uma opcao: ");
-        scanf("%d", &opcao);
-        getchar(); // Limpa o buffer deixado pelo scanf
-
-        switch (opcao) {
-        case 1:
-            printf("\nDigite a placa do carro: ");
-            fgets(carro.placa, 10, stdin);
-            // Remove o newline do final da string, se presente
-            carro.placa[strcspn(carro.placa, "\n")] = '\0';
-
-            printf("\nO carro tem alguma prioridade, [S]/[N]: ");
-            char resposta[2];
-            fgets(resposta, 2, stdin);
-
-            if (strcmp("S", resposta) == 0 || strcmp("s", resposta) == 0) {
-                carro.prioridade = 1;
-            } else {
-                carro.prioridade = 0;
-            }
-
-            carro.deslocamento = 0;
-
-            estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-            getchar();
-            break;
-        case 2:
-            printf("\nDigite a placa do carro: ");
-            char placa[10];
-            fgets(placa, 10, stdin);
-            // Remove o newline do final da string, se presente
-            placa[strcspn(placa, "\n")] = '\0';
-
-            // TipoCarro temporário para remocao
-            TipoCarro carroBusca;
-            // Atribuindo a placa obtida anteriormente ao carroBusca
-            strcpy(carroBusca.placa, placa);
-
-            // Chamando a funcao
-            retirarCarro(&MonsenhorJoaoPedro, &BomJesusDosPassos, carroBusca);
-
-            break;
-        case 3:
-            exibirRuas(BomJesusDosPassos, MonsenhorJoaoPedro);
-            break;
-        default:
-            if (opcao != 0) {
-                printf("\nVoce digitou uma opcao invalida. Por favor, digite outro valor.\n");
-            }
-            break;
+        if (aux->carro.prioridade) {
+            const char *prioridade = " 1\n\n";
+            strcat(carroFormatado, prioridade);
+        } else {
+            const char *prioridade = " 0\n\n";
+            strcat(carroFormatado, prioridade);
         }
+        strncat(textoRuaEspera, carroFormatado, sizeof(textoRuaEspera) - strlen(textoRuaEspera) - 1);
 
-        printf("\nPressione Enter para continuar...");
-        getchar();
-        system("cls");
-        system("clear");
-    } while (opcao != 0);
+        aux = aux->prox;
+    }
+
+    // Atualizar o texto do label com o conteúdo do buffer
+    gtk_label_set_text(GTK_LABEL(w->lb_rua_espera), textoRuaEspera);
+}
+
+int main(int argc, char *argv[]) {
+    GtkBuilder *builder;
+
+    widgets_t *widgets = g_slice_new(widgets_t);
+
+    gtk_init(&argc, &argv);
+
+    builder = gtk_builder_new();
+
+    gtk_builder_add_from_file(builder, "glade/window.glade", NULL);
+
+    widgets->window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
+    widgets->bt_estacionar = GTK_WIDGET(gtk_builder_get_object(builder, "bt_estacionar"));
+    widgets->bt_retirar = GTK_WIDGET(gtk_builder_get_object(builder, "bt_retirar"));
+    widgets->et_placa = GTK_WIDGET(gtk_builder_get_object(builder, "et_placa"));
+    widgets->ck_prioridade = GTK_WIDGET(gtk_builder_get_object(builder, "ck_prioridade"));
+    widgets->lb_estacionamento = GTK_WIDGET(gtk_builder_get_object(builder, "lb_estacionamento"));
+    widgets->lb_rua_espera = GTK_WIDGET(gtk_builder_get_object(builder, "lb_rua_espera"));
+
+    // Estacionamento
+    FFVazia(&widgets->BomJesusDosPassos);
+    // Entrada/Fila de espera
+    FFVazia(&widgets->MonsenhorJoaoPedro);
+
+    gtk_builder_connect_signals(builder, widgets);
+
+    g_object_unref(builder);
+
+    gtk_widget_show(widgets->window);
+
+    gtk_main();
+
+    g_slice_free(widgets_t, widgets);
 
     return 0;
+}
+
+void on_window_destroy(void) {
+    gtk_main_quit();
+}
+
+void on_bt_estacionar_clicked(GtkButton *bt_estacionar, void *dados) {
+    widgets_t *w = (widgets_t *)dados;
+    const gchar *placa = gtk_entry_get_text(GTK_ENTRY(w->et_placa));
+    int prioridade = 0;
+    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w->ck_prioridade))) {
+        prioridade = 1;
+    }
+
+    printf("\nPlaca: %s\n", placa);
+    printf("Prioridade: %d\n", prioridade);
+
+    TipoCarro carro;
+    carro.deslocamento = 0;
+    strcpy(carro.placa, placa);
+    carro.prioridade = prioridade;
+    estacionarCarro(carro, &w->BomJesusDosPassos, &w->MonsenhorJoaoPedro);
+    atualizaTela(w);
+}
+
+void on_bt_retirar_clicked(GtkButton *bt_retirar, void *dados) {
+    widgets_t *w = (widgets_t *)dados;
+    const gchar *placa = gtk_entry_get_text(GTK_ENTRY(w->et_placa));
+    TipoCarro carro;
+    strcpy(carro.placa, placa);
+    retirarCarro(&w->MonsenhorJoaoPedro, &w->BomJesusDosPassos, carro);
+    atualizaTela(w);
 }

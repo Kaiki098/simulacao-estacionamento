@@ -1,0 +1,3 @@
+/home/kaiki/Estudos/BCC/3_Periodo/ED1/TrabDesorganizado/simulacao-estacionamento/build/CMakeFiles/application.dir
+/home/kaiki/Estudos/BCC/3_Periodo/ED1/TrabDesorganizado/simulacao-estacionamento/build/CMakeFiles/edit_cache.dir
+/home/kaiki/Estudos/BCC/3_Periodo/ED1/TrabDesorganizado/simulacao-estacionamento/build/CMakeFiles/rebuild_cache.dir
