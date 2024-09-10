@@ -83,7 +83,7 @@ void retirarCarro(TipoFila *ruaMonsenhor, TipoFila *estacionamento, TipoCarro ca
             // Se encontrou o carro a ser retirado...
             carroEncontrado = 1; // Sinaliza sinal 1
             printf("\nCarro de placa: %s removido. Deslocamentos: %d\n", carroAtual.placa, carroAtual.deslocamento);
-            continue;
+            break;
         }
         // Se não, irá movendo os demais para a rua auxiliar ate encontra-lo
         carroAtual.deslocamento++;            // Incrementar deslocamento simbolizando a rua
@@ -140,6 +140,7 @@ typedef struct {
     GtkWidget *ck_prioridade;
     GtkWidget *lb_estacionamento;
     GtkWidget *lb_rua_espera;
+    GtkWidget *lb_log;
     TipoFila BomJesusDosPassos;
     TipoFila MonsenhorJoaoPedro;
 } widgets_t;
@@ -193,7 +194,9 @@ void atualizaTela(widgets_t *w) {
 
     // Atualizar o texto do label com o conteúdo do buffer
     gtk_label_set_text(GTK_LABEL(w->lb_rua_espera), textoRuaEspera);
+    gtk_label_set_text(GTK_LABEL(w->lb_log), "Opa");
 }
+    
 
 int main(int argc, char *argv[]) {
     GtkBuilder *builder;
@@ -213,6 +216,7 @@ int main(int argc, char *argv[]) {
     widgets->ck_prioridade = GTK_WIDGET(gtk_builder_get_object(builder, "ck_prioridade"));
     widgets->lb_estacionamento = GTK_WIDGET(gtk_builder_get_object(builder, "lb_estacionamento"));
     widgets->lb_rua_espera = GTK_WIDGET(gtk_builder_get_object(builder, "lb_rua_espera"));
+    widgets->lb_log = GTK_WIDGET(gtk_builder_get_object(builder, "lb_log"));
 
     // Estacionamento
     FFVazia(&widgets->BomJesusDosPassos);

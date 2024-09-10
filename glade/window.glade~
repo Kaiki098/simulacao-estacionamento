@@ -145,6 +145,45 @@
                 <property name="position">1</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">Log</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">gbvbowueoouiçwebvouiçwebg
+
+</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -181,21 +220,6 @@
                   <object class="GtkLabel" id="lb_estacionamento">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="label" translatable="yes">Placa: 12345
-Deslocamentos: 0
-
-Placa: 12345
-Deslocamentos: 0
-
-Placa: 12345
-Deslocamentos: 0
-
-Placa: 12345
-Deslocamentos: 0
-
-Placa: 12345
-Deslocamentos: 0
-</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -231,14 +255,6 @@ Deslocamentos: 0
                   <object class="GtkLabel" id="lb_rua_espera">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="label" translatable="yes">Placa: 23456
-Prioridade: 1
-
-Placa: 23456
-Prioridade: 1
-
-Placa: 23456
-Prioridade: 1</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
