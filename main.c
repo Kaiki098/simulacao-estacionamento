@@ -30,14 +30,14 @@ int estacionamentoEstaCheio(TipoFila *estacionamento) {
     return numeroDeCarros == MAX_CARROS;
 }
 
-void estacionarCarro(TipoCarro carro, TipoFila *estacionamento, TipoFila *ruaMonsenhor) {
+void estacionarCarro(TipoCarro carro, TipoFila *estacionamento, TipoFila *ruaMonsenhor){
     /**
      *  Deve verificar se a fila BomJesusDosPassos (estacionamento) esta cheia
      *      Se estiver cheia deve ser enfileirado na fila MonsenhorJoaoPedro
      *      Caso nao estiver cheia deve imprimir/retornar que o carro foi estacionado
      */
 
-    if (estacionamentoEstaCheio(estacionamento)) {
+    if(estacionamentoEstaCheio(estacionamento)){
         Enfileira(carro, ruaMonsenhor);
         printf("Carro de placa %s esta aguardando na rua Monsenhor Joao Pedro.\n", carro.placa);
         return;
@@ -47,76 +47,74 @@ void estacionarCarro(TipoCarro carro, TipoFila *estacionamento, TipoFila *ruaMon
     printf("Carro de placa %s foi estacionado.\n", carro.placa);
 }
 
-// Funcoes para gerenciamento do estacionamento
-// funcoes para retirado de carros
-void retirarCarro(TipoFila *ruaMonsenhor, TipoFila *estacionamento, TipoCarro carro) { // Void ou Int
-
-    // Foi adicionado o parametro 'ruaMonsenhor' que atuará como uma "Fila de Espera"
-
-    /**
-     * - Deve utilizar a fila ruaAuxiliar para quando o carro nao eh o primeiro da fila
-     *   e garantir que as filas estao na mesma ordem com a retirada do carro;
-     *
-     * - Deve retornar/exibir o número de vezes que o carro foi deslocado
-     *   dentro da fila BomJesusDosPassos, incluindo a partida, mas nao a chegada;
-     *
-     * - Deve estacionar os carros que estao na fila de espera com maior prioriade,
-     *   se nao tiver um com maior prioridade o mais a frente deve estacionar;
-     */
-
-    // A variavel filaAuxiliar ira atuar como uma fila temporaria para armazenar os carros posteriores ao que sera removido
-    TipoFila filaAuxiliar;
-    FFVazia(&filaAuxiliar);
-
-    // Variaveis de apoio referente ao carro e o flag de encontre
+//Funcoes para gerenciamento do estacionamento
+//funcoes para retirado de carros
+//Função para retirar o carro específico
+int verificarCarro(TipoFila *estacionamento, TipoCarro carro, TipoFila *filaAuxiliar){
     TipoCarro carroAtual;
     int carroEncontrado = 0;
 
-    // Percorrer a fila do estacionamento até esvaziar em busca do carro
-    while (!Vazia(*estacionamento)) {
-        // Começa desenfileirando, devido a simulacao, e armazenando o mesmo no campo temporario
+    while(!Vazia(*estacionamento)){
         Desenfileira(estacionamento, &carroAtual);
-
-        // Verificacao de placa
         if (strcmp(carroAtual.placa, carro.placa) == 0) {
-            // Se encontrou o carro a ser retirado...
-            carroEncontrado = 1; // Sinaliza sinal 1
+            carroEncontrado = 1;
             printf("\nCarro de placa: %s removido. Deslocamentos: %d\n", carroAtual.placa, carroAtual.deslocamento);
-            continue;
+            break;
         }
-        // Se não, irá movendo os demais para a rua auxiliar ate encontra-lo
-        carroAtual.deslocamento++;            // Incrementar deslocamento simbolizando a rua
-        Enfileira(carroAtual, &filaAuxiliar); // Enfileirando na filaAuxiliar
+        carroAtual.deslocamento++;
+        Enfileira(carroAtual, filaAuxiliar);
     }
+    return carroEncontrado;
+}
 
-    // Retornando os carros da 'ruaAuxiliar' para o estacionamento
-    while (!Vazia(filaAuxiliar)) {
-        Desenfileira(&filaAuxiliar, &carroAtual);
+// Função para restaurar a fila auxiliar de volta ao estacionamento
+void restaurarFilaAuxiliar(TipoFila *filaAuxiliar, TipoFila *estacionamento){
+    TipoCarro carroAtual;
+    while (!Vazia(*filaAuxiliar)) {
+        Desenfileira(filaAuxiliar, &carroAtual);
         Enfileira(carroAtual, estacionamento);
     }
+}
 
-    // Verificação de flag 0, Se Nao achou...
-    if (!carroEncontrado) {
-        printf("\nCarro de placa: %s não encontrado no estacionamento...\n", carro.placa);
-        return;
-    }
+//Função para estacionar carros da fila ruaMonsenhor no estacionamento
+void estacionarCarrosDaRua(TipoFila *ruaMonsenhor, TipoFila *estacionamento, TipoFila *filaAuxiliar){
+    TipoCarro carroAtual;
 
-    //
-    while (!Vazia(*ruaMonsenhor)) {
+    while(!Vazia(*ruaMonsenhor)){
         Desenfileira(ruaMonsenhor, &carroAtual);
         if (!estacionamentoEstaCheio(estacionamento) && carroAtual.prioridade == 1) {
             Enfileira(carroAtual, estacionamento);
             printf("Carro de placa %s foi estacionado.\n", carroAtual.placa);
             continue;
         }
-        Enfileira(carroAtual, &filaAuxiliar);
+        Enfileira(carroAtual, filaAuxiliar);
     }
-    while (!Vazia(filaAuxiliar)) {
-        Desenfileira(&filaAuxiliar, &carroAtual);
-        Enfileira(carroAtual, ruaMonsenhor);
+}
+
+//Função principal refatorada usando as auxiliares
+void retirarCarro(TipoFila *ruaMonsenhor, TipoFila *estacionamento, TipoCarro carro){
+    TipoFila filaAuxiliar;
+    FFVazia(&filaAuxiliar);
+
+    // Verifica e remove o carro, e organiza os carros na filaAuxiliar
+    int carroEncontrado = verificarCarro(estacionamento, carro, &filaAuxiliar);
+
+    // Restaura os carros da fila auxiliar para o estacionamento
+    restaurarFilaAuxiliar(&filaAuxiliar, estacionamento);
+
+    if(!carroEncontrado){
+        printf("\nCarro de placa: %s não encontrado no estacionamento...\n", carro.placa);
+        return;
     }
 
-    while (!Vazia(*ruaMonsenhor) && !estacionamentoEstaCheio(estacionamento)) {
+    //Estaciona carros com prioridade da ruaMonsenhor
+    estacionarCarrosDaRua(ruaMonsenhor, estacionamento, &filaAuxiliar);
+
+    //Finaliza estacionando carros restantes
+    restaurarFilaAuxiliar(&filaAuxiliar, ruaMonsenhor);
+
+    while(!Vazia(*ruaMonsenhor) && !estacionamentoEstaCheio(estacionamento)){
+        TipoCarro carroAtual;
         Desenfileira(ruaMonsenhor, &carroAtual);
         Enfileira(carroAtual, estacionamento);
         printf("Carro de placa %s foi estacionado.\n", carroAtual.placa);
