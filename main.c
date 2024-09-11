@@ -59,7 +59,7 @@ int verificarCarro(TipoFila *estacionamento, TipoCarro carro, TipoFila *filaAuxi
         if (strcmp(carroAtual.placa, carro.placa) == 0) {
             carroEncontrado = 1;
             printf("\nCarro de placa: %s removido. Deslocamentos: %d\n", carroAtual.placa, carroAtual.deslocamento);
-            continue;
+            break;
         }
         carroAtual.deslocamento++;
         Enfileira(carroAtual, filaAuxiliar);
