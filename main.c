@@ -1,25 +1,11 @@
-// Nome de funcoes e variaveis eh passivel a mudanca
-
-/*
-typedef struct {
-    char placa[10];
-    int deslocamento;
-    int prioridade;
-} TipoCarro;
-*/
-
 #include "ruaFila.h"
 #include <string.h>
-// Depois de fazer todas as funcoes, separar as funcoes em outro arquivo
 #define MAX_CARROS 5 // Numero maximo de carros no estacionamento
 
-// Funcoes para estacionar carro
-int estacionamentoEstaCheio(TipoFila *estacionamento) {
-    /**
-     * Pode ser substituido por um campo tamanho na struct TipoFila
-     * Talvez seja melhor
-     */
+/* Funcoes para gerenciamento do estacionamento */
 
+// Funcao que verifica se o estacionamento possui mais de 5 carros (MAX_CARROS)
+int estacionamentoEstaCheio(TipoFila *estacionamento) {
     TipoApontador apontadorCarro = estacionamento->frente->prox;
     int numeroDeCarros = 0;
 
@@ -32,9 +18,9 @@ int estacionamentoEstaCheio(TipoFila *estacionamento) {
 
 void estacionarCarro(TipoCarro carro, TipoFila *estacionamento, TipoFila *ruaMonsenhor){
     /**
-     *  Deve verificar se a fila BomJesusDosPassos (estacionamento) esta cheia
-     *      Se estiver cheia deve ser enfileirado na fila MonsenhorJoaoPedro
-     *      Caso nao estiver cheia deve imprimir/retornar que o carro foi estacionado
+     *  Verifica se a fila BomJesusDosPassos (estacionamento) esta cheia
+     *      Se estiver cheia enfileira na fila MonsenhorJoaoPedro
+     *      Caso nao estiver cheia imprimir/retornar que o carro foi estacionado
      */
 
     if(estacionamentoEstaCheio(estacionamento)){
@@ -47,9 +33,9 @@ void estacionarCarro(TipoCarro carro, TipoFila *estacionamento, TipoFila *ruaMon
     printf("Carro de placa %s foi estacionado.\n", carro.placa);
 }
 
-//Funcoes para gerenciamento do estacionamento
-//funcoes para retirado de carros
-//Função para retirar o carro específico
+/* Funcoes para retirada de carros */
+
+// Função para retirar o carro específico
 int verificarCarro(TipoFila *estacionamento, TipoCarro carro, TipoFila *filaAuxiliar){
     TipoCarro carroAtual;
     int carroEncontrado = 0;
@@ -58,7 +44,7 @@ int verificarCarro(TipoFila *estacionamento, TipoCarro carro, TipoFila *filaAuxi
         Desenfileira(estacionamento, &carroAtual);
         if (strcmp(carroAtual.placa, carro.placa) == 0) {
             carroEncontrado = 1;
-            printf("\nCarro de placa: %s removido. Deslocamentos: %d\n", carroAtual.placa, carroAtual.deslocamento);
+            printf("\nCarro de placa: %s removido. Deslocamentos: %d\n", carroAtual.placa, carroAtual.deslocamento+1); // deslocamentos + 1, pois a sáida conta como deslocamento
             break;
         }
         carroAtual.deslocamento++;
@@ -67,7 +53,7 @@ int verificarCarro(TipoFila *estacionamento, TipoCarro carro, TipoFila *filaAuxi
     return carroEncontrado;
 }
 
-// Função para restaurar a fila auxiliar de volta ao estacionamento
+/* Função para restaurar a fila auxiliar de volta ao estacionamento */
 void restaurarFilaAuxiliar(TipoFila *filaAuxiliar, TipoFila *estacionamento){
     TipoCarro carroAtual;
     while (!Vazia(*filaAuxiliar)) {
@@ -91,7 +77,7 @@ void estacionarCarrosDaRua(TipoFila *ruaMonsenhor, TipoFila *estacionamento, Tip
     }
 }
 
-//Função principal refatorada usando as auxiliares
+//Função principal para retirada de carro
 void retirarCarro(TipoFila *ruaMonsenhor, TipoFila *estacionamento, TipoCarro carro){
     TipoFila filaAuxiliar;
     FFVazia(&filaAuxiliar);
@@ -121,6 +107,7 @@ void retirarCarro(TipoFila *ruaMonsenhor, TipoFila *estacionamento, TipoCarro ca
     }
 }
 
+// Função para exibir as ruas
 void exibirRuas(TipoFila BomJesusDosPassos, TipoFila MonsenhorJoaoPedro) {
     printf("\nEstacionamento: \n");
     Vazia(BomJesusDosPassos) ? printf("\nNao ha carros no estacionamento.") : exibe(BomJesusDosPassos);
