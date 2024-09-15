@@ -2,6 +2,10 @@
 #include <string.h>
 #define MAX_CARROS 5 // Numero maximo de carros no estacionamento
 
+/**
+ * Alunos: Kaiki Alvarenga de Souza e Richard Rodrigues Abreu
+ */
+
 /* Funcoes para gerenciamento do estacionamento */
 
 // Funcao que verifica se o estacionamento possui mais de 5 carros (MAX_CARROS)
@@ -16,14 +20,14 @@ int estacionamentoEstaCheio(TipoFila *estacionamento) {
     return numeroDeCarros == MAX_CARROS;
 }
 
-void estacionarCarro(TipoCarro carro, TipoFila *estacionamento, TipoFila *ruaMonsenhor){
+void estacionarCarro(TipoCarro carro, TipoFila *estacionamento, TipoFila *ruaMonsenhor) {
     /**
      *  Verifica se a fila BomJesusDosPassos (estacionamento) esta cheia
      *      Se estiver cheia enfileira na fila MonsenhorJoaoPedro
      *      Caso nao estiver cheia imprimir/retornar que o carro foi estacionado
      */
 
-    if(estacionamentoEstaCheio(estacionamento)){
+    if (estacionamentoEstaCheio(estacionamento)) {
         Enfileira(carro, ruaMonsenhor);
         printf("Carro de placa %s esta aguardando na rua Monsenhor Joao Pedro.\n", carro.placa);
         return;
@@ -36,15 +40,15 @@ void estacionarCarro(TipoCarro carro, TipoFila *estacionamento, TipoFila *ruaMon
 /* Funcoes para retirada de carros */
 
 // Função para retirar o carro específico
-int verificarCarro(TipoFila *estacionamento, TipoCarro carro, TipoFila *filaAuxiliar){
+int verificarCarro(TipoFila *estacionamento, TipoCarro carro, TipoFila *filaAuxiliar) {
     TipoCarro carroAtual;
     int carroEncontrado = 0;
 
-    while(!Vazia(*estacionamento)){
+    while (!Vazia(*estacionamento)) {
         Desenfileira(estacionamento, &carroAtual);
         if (strcmp(carroAtual.placa, carro.placa) == 0) {
             carroEncontrado = 1;
-            printf("\nCarro de placa: %s removido. Deslocamentos: %d\n", carroAtual.placa, carroAtual.deslocamento+1); // deslocamentos + 1, pois a sáida conta como deslocamento
+            printf("\nCarro de placa: %s removido. Deslocamentos: %d\n", carroAtual.placa, carroAtual.deslocamento + 1); // deslocamentos + 1, pois a sáida conta como deslocamento
             break;
         }
         carroAtual.deslocamento++;
@@ -54,7 +58,7 @@ int verificarCarro(TipoFila *estacionamento, TipoCarro carro, TipoFila *filaAuxi
 }
 
 /* Função para restaurar a fila auxiliar de volta ao estacionamento */
-void restaurarFilaAuxiliar(TipoFila *filaAuxiliar, TipoFila *estacionamento){
+void restaurarFilaAuxiliar(TipoFila *filaAuxiliar, TipoFila *estacionamento) {
     TipoCarro carroAtual;
     while (!Vazia(*filaAuxiliar)) {
         Desenfileira(filaAuxiliar, &carroAtual);
@@ -62,11 +66,11 @@ void restaurarFilaAuxiliar(TipoFila *filaAuxiliar, TipoFila *estacionamento){
     }
 }
 
-//Função para estacionar carros da fila ruaMonsenhor no estacionamento
-void estacionarCarrosDaRua(TipoFila *ruaMonsenhor, TipoFila *estacionamento, TipoFila *filaAuxiliar){
+// Função para estacionar carros da fila ruaMonsenhor no estacionamento
+void estacionarCarrosDaRua(TipoFila *ruaMonsenhor, TipoFila *estacionamento, TipoFila *filaAuxiliar) {
     TipoCarro carroAtual;
 
-    while(!Vazia(*ruaMonsenhor)){
+    while (!Vazia(*ruaMonsenhor)) {
         Desenfileira(ruaMonsenhor, &carroAtual);
         if (!estacionamentoEstaCheio(estacionamento) && carroAtual.prioridade == 1) {
             Enfileira(carroAtual, estacionamento);
@@ -77,8 +81,8 @@ void estacionarCarrosDaRua(TipoFila *ruaMonsenhor, TipoFila *estacionamento, Tip
     }
 }
 
-//Função principal para retirada de carro
-void retirarCarro(TipoFila *ruaMonsenhor, TipoFila *estacionamento, TipoCarro carro){
+// Função principal para retirada de carro
+void retirarCarro(TipoFila *ruaMonsenhor, TipoFila *estacionamento, TipoCarro carro) {
     TipoFila filaAuxiliar;
     FFVazia(&filaAuxiliar);
 
@@ -88,18 +92,18 @@ void retirarCarro(TipoFila *ruaMonsenhor, TipoFila *estacionamento, TipoCarro ca
     // Restaura os carros da fila auxiliar para o estacionamento
     restaurarFilaAuxiliar(&filaAuxiliar, estacionamento);
 
-    if(!carroEncontrado){
+    if (!carroEncontrado) {
         printf("\nCarro de placa: %s não encontrado no estacionamento...\n", carro.placa);
         return;
     }
 
-    //Estaciona carros com prioridade da ruaMonsenhor
+    // Estaciona carros com prioridade da ruaMonsenhor
     estacionarCarrosDaRua(ruaMonsenhor, estacionamento, &filaAuxiliar);
 
-    //Finaliza estacionando carros restantes
+    // Finaliza estacionando carros restantes
     restaurarFilaAuxiliar(&filaAuxiliar, ruaMonsenhor);
 
-    while(!Vazia(*ruaMonsenhor) && !estacionamentoEstaCheio(estacionamento)){
+    while (!Vazia(*ruaMonsenhor) && !estacionamentoEstaCheio(estacionamento)) {
         TipoCarro carroAtual;
         Desenfileira(ruaMonsenhor, &carroAtual);
         Enfileira(carroAtual, estacionamento);
@@ -125,37 +129,6 @@ int main() {
     FFVazia(&MonsenhorJoaoPedro);
 
     TipoCarro carro;
-
-    carro.deslocamento = 0;
-    carro.prioridade = 0;
-    strcpy(carro.placa, "1");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    strcpy(carro.placa, "2");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    strcpy(carro.placa, "3");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    strcpy(carro.placa, "4");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    strcpy(carro.placa, "5");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    carro.prioridade = 1;
-    strcpy(carro.placa, "6");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    carro.prioridade = 0;
-    strcpy(carro.placa, "7");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    carro.prioridade = 1;
-    strcpy(carro.placa, "8");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    carro.prioridade = 0;
-    strcpy(carro.placa, "9");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-    carro.prioridade = 1;
-    strcpy(carro.placa, "10");
-    estacionarCarro(carro, &BomJesusDosPassos, &MonsenhorJoaoPedro);
-
-    // TipoFila JaimeGoncalves; Eh necessaria?
-    // FFVazia(&JaimeGoncalves);
     int opcao = 0;
 
     do {
